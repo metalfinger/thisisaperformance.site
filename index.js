@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    console.log("asdfghjkl;");
+
     function h12ScrollTo() {
         currentState = 12;
         currentScroll = $(".h12").position().top;
