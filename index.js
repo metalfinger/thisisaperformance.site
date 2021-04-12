@@ -585,8 +585,8 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Play 512 Audio and start Typing Animation");
-                h12Audio.play();
-                h12Audio.onended = function() {
+                h512Audio.play();
+                h512Audio.onended = function() {
                     console.log("Display h513");
                     h513DIsplay();
                 };
