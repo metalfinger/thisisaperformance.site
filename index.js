@@ -128,7 +128,7 @@ $(document).ready(function() {
         console.log("PLAY");
         // h31ScrollTo();
         // h41ScrollTo();
-        h51ScrollTo();
+        // h51ScrollTo();
         //h61ScrollTo();
         // h71ScrollTo();
 
@@ -204,15 +204,15 @@ $(document).ready(function() {
         h812Video.play();
         h812Video.pause();
 
-        // h71Audio.play();
-        // h71Audio.pause();
+        h71Audio.play();
+        h71Audio.pause();
 
-        // h11Audio.play();
-        // h11Audio.onended = function() {
-        //     console.log("Shift to h12");
-        //     currentState = 12;
-        //     h12ScrollTo();
-        // };
+        h11Audio.play();
+        h11Audio.onended = function() {
+            console.log("Shift to h12");
+            currentState = 12;
+            h12ScrollTo();
+        };
     });
 
     function h12ScrollTo() {
