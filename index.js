@@ -1,219 +1,669 @@
 $(document).ready(function() {
+
     var currentScroll = 0;
     var currentState = 11;
-    var h11Audio = document.getElementById("h11AudioID");
-    var h12Audio = document.getElementById("h12AudioID");
-    var h21Audio = document.getElementById("h21AudioID");
-    var h22Audio = document.getElementById("h22AudioID");
-    var h31Audio = document.getElementById("h31AudioID");
-    var h41Audio = document.getElementById("h41AudioID");
-    //!!Newly Added h511Audio
-    var h512Audio = document.getElementById("h512AudioID");
-    var h612Audio = document.getElementById("h612AudioID");
-    var h71Audio = document.getElementById("h71AudioID");
 
-    //VIDEO
-    var h21Video = videojs("h21VideoID");
-    h21Video.ready(function() {
-        h21Video.on("ended", function() {
+
+    $(window).resize(function() {
+        currentScroll = returnTheHook().position().top;
+
+        $(".container").css("top", -currentScroll);
+    });
+
+    function returnTheHook() {
+        var currentHook = currentState.toString();
+        console.log(currentHook, currentHook.length);
+        if (currentHook.length == 3) {
+            if ((currentHook != "612") && (currentHook != "613")) {
+                currentHook = currentHook.substring(0, currentHook.length - 1);
+            }
+        }
+        return $(".h" + currentHook);
+    }
+
+
+
+    //!!Physics
+    // var body = document.querySelector(".physics");
+
+    // // Engine.run(engine);
+
+    // var Engine = Matter.Engine,
+    //     Render = Matter.Render,
+    //     World = Matter.World,
+    //     Bodies = Matter.Bodies;
+
+    // var engine = Engine.create();
+
+    // var render = Render.create({
+    //     element: body,
+    //     engine: engine,
+    //     options: {
+    //         width: 600,
+    //         height: 400,
+    //         wireframes: false,
+    //         background: '#e5e7ca'
+    //     }
+    // });
+
+    // render.canvas.width = document.documentElement.clientWidth;
+    // render.canvas.height = document.documentElement.clientHeight;
+
+    // var canvasWidth = document.documentElement.clientWidth;
+    // var canvasHeight = document.documentElement.clientHeight;
+
+    // var arc1 = Bodies.fromVertices(canvasWidth * 5 / 8, canvasHeight / 2, [
+    //     { x: 0, y: 0 },
+    //     { x: canvasWidth / 3, y: -10 },
+    //     { x: 0, y: canvasWidth / 6 },
+    //     { x: canvasWidth / 3, y: canvasWidth / 6 + 10 }
+    // ], { render: { fillStyle: '#172430' } });
+
+    // var arc2 = Bodies.fromVertices(canvasWidth * 4.33 / 8, canvasHeight / 2 + (canvasWidth * 2.6 / 16), [
+    //     { x: 0, y: 0 },
+    //     { x: canvasWidth / 6, y: 0 },
+    //     { x: 0, y: canvasWidth / 6 },
+    //     { x: canvasWidth / 6, y: canvasWidth / 6 }
+    // ], { render: { fillStyle: '#52262b' } });
+
+    // // var arc3 = Bodies.fromVertices(600, 500, [
+    // //     { x: 0, y: 0 },
+    // //     { x: canvasWidth / 3, y: 0 },
+    // //     { x: 0, y: canvasWidth / 6 },
+    // //     { x: canvasWidth / 3, y: canvasWidth / 6 }
+    // // ], { render: { fillStyle: '#172430' } });
+
+    // // var arc4 = Bodies.fromVertices(600, 500, [
+    // //     { x: 0, y: 0 },
+    // //     { x: canvasWidth / 3, y: 0 },
+    // //     { x: 0, y: canvasWidth / 6 },
+    // //     { x: canvasWidth / 3, y: canvasWidth / 6 }
+    // // ], { render: { fillStyle: '#172430' } });
+
+    // // var arc5 = Bodies.fromVertices(600, 500, [
+    // //     { x: 0, y: 0 },
+    // //     { x: canvasWidth / 3, y: 0 },
+    // //     { x: 0, y: canvasWidth / 6 },
+    // //     { x: canvasWidth / 3, y: canvasWidth / 6 }
+    // // ], { render: { fillStyle: '#172430' } });
+
+    // var ground = Bodies.rectangle(render.canvas.width / 2, render.canvas.height, render.canvas.width, 60, { isStatic: true });
+
+    // World.add(engine.world, [arc2, arc1, ground]);
+
+    // // Engine.run(engine);
+
+    // Render.run(render);
+
+    //!!New Audio Code
+
+    var mainAudio = document.getElementById("mainAudioID");
+
+    mainAudio.onended = function() {
+        console.log("Audio Ended ->", currentState);
+
+        if (currentState == 11) {
+            console.log("Shift to -> h12");
+            unloadAudio();
+            h12ScrollTo();
+        } else if (currentState == 12) {
+            console.log("Shift to -> nowhere - handeled by arrow scroll");
+        } else if (currentState == 21) {
+            console.log("Shift to -> ");
+            unloadAudio();
+            h212DisplayHide();
+        } else if (currentState == 22) { //!!Covered
+            unloadAudio();
+            h31ScrollTo();
+        } else if (currentState == 31) {
+            console.log("Shift to -> ");
+            unloadAudio();
+            h312DisplayHide();
+        } else if (currentState == 41) {
+            console.log("Shift to -> ");
+            unloadAudio();
+
+            hideh4VideoPlayer();
+            pauseh4VideoPlayer();
+
+            if (h41TimerRunning) {
+                h41TimerRunning = false;
+                clearInterval(h41Interval);
+            }
+
+            console.log("Scroll to h51");
+            h51ScrollTo();
+        } else if (currentState == 512) {
+            console.log("Shift to -> ");
+            unloadAudio();
+            h513Display();
+        } else if (currentState == 612) {
+            console.log("Shift to -> ");
+            console.log("SCroll to h613 ");
+            unloadAudio();
+
+            unloadh6VideoPlayer();
+            pauseh6VideoPlayers();
+
+            h613ScrollTo();
+        } else if (currentState == 71) {
+
+            console.log("Shift to -> ");
+        }
+
+    };
+
+    var audioPlaying = false;
+    var audioLoaded = false;
+
+    function playAudio() {
+        if (!audioPlaying) {
+            audioPlaying = true;
+            mainAudio.play();
+        }
+    }
+
+    function loadAudio(loopBool) {
+
+
+        pauseAudio();
+
+        var audioSource = "none";
+        audioLoaded = true;
+
+        if (currentState == 11) { //!!Covered
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 12) { //!!Covered
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 21) { //!!Covered
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 22) { //!!Covered
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 31) {
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 41) {
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 512) {
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 612) {
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else if (currentState == 71) {
+            audioSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618400637/Act%201/audio_1_m1ux6m.mp3";
+        } else {
+            audioLoaded = false;
+        }
+
+        if (audioSource != "none") {
+            mainAudio.setAttribute('src', audioSource);
+            mainAudio.load();
+            playAudio();
+            mainAudio.loop = loopBool;
+            console.log("Audio played -> ", currentState);
+        }
+
+    }
+
+    function unloadAudio() {
+        console.log("Audio Unloaded ", currentState);
+        audioLoaded = false;
+    }
+
+    function pauseAudio() {
+        if (audioPlaying) {
+            audioPlaying = false;
+            mainAudio.pause();
+        }
+    }
+
+
+    //!!New Video Code
+
+    var videoPlaying = false;
+    var videoLoaded = false;
+
+    var mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405007/Act%202/act2-warmupvideo_edzdxj.webm";
+
+    var videoElm = document.getElementById('testVideo');
+    videoElm.addEventListener("ended", function() {
+
+        videoPlaying = false;
+        console.log("Video had Ended  -> " + currentState.toString());
+
+        if (currentState == 212) {
+            unloadAudio();
             h213Display();
-        });
-    });
-    var h312Video = videojs("h312VideoID");
-    h312Video.ready(function() {
-        h312Video.on("ended", function() {
-            console.log("Display h313");
+        } else if (currentState == 312) {
+            unloadAudio();
             h313Display();
-        });
-    });
-    var h314Video = videojs("h314VideoID");
-    h314Video.ready(function() {
-        h314Video.on("ended", function() {
-            console.log("Display h315");
+        } else if (currentState == 314) {
+            unloadAudio();
             h315Display();
-        });
-    });
-
-    var h41Video = videojs("h41VideoID");
-    var h42Video = videojs("h42VideoID");
-    var h43Video = videojs("h43VideoID");
-    var h44Video = videojs("h44VideoID");
-    var h45Video = videojs("h45VideoID");
-
-    //!!Act 5
-    var h511Video = videojs("h511VideoID");
-    h511Video.ready(function() {
-        h511Video.on("ended", function() {
-            console.log("h511Video ended  ->  Display h512");
+        } else if (currentState == 511) {
+            unloadAudio();
             h512Display();
-        });
-    });
-
-    var h513Video = videojs("h513VideoID");
-    h513Video.ready(function() {
-        h513Video.on("ended", function() {
-            console.log("h513Video ended  ->   Display h514");
-            h514DIsplay();
-
-        })
-    });
-
-    var h515Video = videojs("h515VideoID");
-    h515Video.ready(function() {
-        h515Video.on("ended", function() {
-            console.log("h515Video ended");
+        } else if (currentState == 513) {
+            unloadAudio();
+            h514Display();
+        } else if (currentState == 515) {
+            unloadAudio();
             h61ScrollTo();
-        });
+        } else if (currentState == 613) {
+            unloadAudio();
+            h71ScrollTo(); //removed
+        } else if (currentState == 812) {
+            unloadAudio();
+            h813Display();
+        }
     });
 
-    //!!Act 6
-    var h6121Video = videojs("h6121VideoID");
-    h6121Video.ready(function() {
-        h6121Video.on("ended", function() {
-            console.log("h6121Video ended");
-        });
-    });
-    var h6122Video = videojs("h6122VideoID");
-    h6122Video.ready(function() {
-        h6122Video.on("ended", function() {
-            console.log("h6122Video ended");
-        });
-    });
-    var h6123Video = videojs("h6123VideoID");
-    h6123Video.ready(function() {
-        h6123Video.on("ended", function() {
-            console.log("h6123Video ended");
-        });
-    });
-    var h6124Video = videojs("h6124VideoID");
-    h6124Video.ready(function() {
-        h6124Video.on("ended", function() {
-            console.log("h6124Video ended");
-        });
-    });
-    var h6125Video = videojs("h6125VideoID");
-    h6125Video.ready(function() {
-        h6125Video.on("ended", function() {
-            console.log("h6125Video ended");
-        });
-    });
-    var h6126Video = videojs("h6126VideoID");
-    h6126Video.ready(function() {
-        h6126Video.on("ended", function() {
-            console.log("h6126Video ended");
-        });
-    });
+    var videoElm = document.getElementById('testVideo');
+    var videoSourceElm = document.getElementById('testVideoSource');
 
-    var h613Video = videojs("h613VideoID");
-    h613Video.ready(function() {
-        h613Video.on("ended", function() {
-            console.log("h613Video ended -> Scroll to h71");
-            h71ScrollTo();
-        });
-    });
+    function loadVideo() { //videoSource, type) {
+
+        videoLoaded = true;
+
+        if (currentState == 212) {
+            $('#testVideo').css('background-color', '#e5e7ca');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405007/Act%202/act2-warmupvideo_edzdxj.webm";
+        } else if (currentState == 312) {
+            $('#testVideo').css('background-color', '#e5e7ca');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405156/Act%203/act3-cheering_video_st80wk.webm";
+        } else if (currentState == 314) {
+            $('#testVideo').css('background-color', '#e5e7ca');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405031/Act%203/act3-cardboard-video_uwmjcj.webm";
+        } else if (currentState == 511) {
+            $('#testVideo').css('background-color', '#182330');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405431/Act%205/dressingup1_utcxkm.webm";
+        } else if (currentState == 513) {
+            $('#testVideo').css('background-color', '#93b4c8');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405631/Act%205/TIHYMT_Lauren_Ankit_Warm-up_1_ctnsit.webm";
+        } else if (currentState == 515) {
+            $('#testVideo').css('background-color', '#93b4c8');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405488/Act%205/dressup-2_m893k8.webm";
+        } else if (currentState == 613) {
+            //h71ScrollTo(); //removed
+        } else if (currentState == 812) {
+            $('#testVideo').css('background-color', '#481c21');
+            mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618408021/Act%208/park-video_r9mnxr.webm";
+        } else {
+            videoLoaded = false;
+        }
+
+        mainVideoSource = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405187/Act%204/Act_4_1_FINAL_pdyom7.webm";
 
 
-    //!!ACT - 8
-    var h812Video = videojs("h812VideoID");
-    h812Video.ready(function() {
-        h812Video.on("ended", function() {
-            console.log("h812Video ended -> Show h813");
-            h813DIsplay();
-        });
+        videoElm = document.getElementById('testVideo');
+        videoSourceElm = document.getElementById('testVideoSource');
+
+        if (!videoElm.paused) {
+            videoElm.pause();
+        }
+
+        videoSourceElm.src = mainVideoSource;
+        videoSourceElm.type = 'video/webm';
+
+        console.log("Play Video -> ", currentState);
+
+        videoElm.load();
+        playVideo();
+    }
+
+    function unloadVideo() {
+        console.log("Video Unloaded ", currentState);
+        videoLoaded = false;
+    }
+
+    function playVideo() {
+        if (!videoPlaying) {
+            videoPlaying = true;
+            videoElm.play();
+        }
+    }
+
+    function pauseVideo() {
+        if (videoPlaying) {
+            videoPlaying = false;
+            if (!videoElm.paused) {
+                videoElm.pause();
+            }
+        }
+    }
+
+    //!h4 Video Player
+
+    var h4VideoPlayerStatus = -1;
+    var h4CurrentVideo = -1;
+    var videoBank = [
+        "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405187/Act%204/Act_4_1_FINAL_pdyom7.webm",
+        "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405187/Act%204/Act_4_2_FINAL_qbxhes.webm",
+        "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405187/Act%204/Act_4_3_FINAL_wbjohb.webm",
+        "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405188/Act%204/Act_4_4_FINAL_qjnepw.webm",
+        "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405193/Act%204/Act_4_5_FINAL_fo6jzx.webm"
+    ];
+
+    var videoElmh4 = document.getElementById('h41Video');
+    videoElmh4.addEventListener("ended", function() {
+        if (h4VideoPlayerStatus == 0) {
+            if (h4CurrentVideo == 0) {
+                h4CurrentVideo = 1;
+                playh4VideoPlayer();
+            } else {
+                h4CurrentVideo = 0;
+                playh4VideoPlayer();
+            }
+        } else if (h4VideoPlayerStatus == 1) {
+            if (h4CurrentVideo == 2) {
+                h4CurrentVideo = 3;
+                playh4VideoPlayer();
+            } else if (h4CurrentVideo == 3) {
+                h4CurrentVideo = 4;
+                playh4VideoPlayer();
+            } else if (h4CurrentVideo == 4) {
+                h4CurrentVideo = 2;
+                playh4VideoPlayer();
+            }
+        } else if (h4VideoPlayerStatus == 2) {
+            playh4VideoPlayer();
+        }
     });
+
+    function inith4Player() {
+        if (h4VideoPlayerStatus == 0) {
+            h4CurrentVideo = 0;
+            playh4VideoPlayer();
+        }
+        if (h4VideoPlayerStatus == 1) {
+            h4CurrentVideo = 2;
+            playh4VideoPlayer();
+        }
+        if (h4VideoPlayerStatus == 2) {
+            h4CurrentVideo = 1;
+            playh4VideoPlayer();
+        }
+    }
+
+    function playh4VideoPlayer() {
+        var videoElmh4 = document.getElementById('h41Video');
+        var videoSourceElmh4 = document.getElementById('h41VideoSource');
+
+        if (!videoElmh4.paused) {
+            videoElmh4.pause();
+        }
+
+        var videoSourceLink = videoBank[h4CurrentVideo];
+        console.log(h4CurrentVideo);
+
+        videoSourceElmh4.src = videoSourceLink;
+        videoSourceElmh4.type = 'video/webm';
+
+        videoElmh4.load();
+        videoElmh4.play();
+    }
+
+    function pauseh4VideoPlayer() {
+        var videoElmh4 = document.getElementById('h41Video');
+        var videoSourceElmh4 = document.getElementById('h41VideoSource');
+
+        if (!videoElmh4.paused) {
+            videoElmh4.pause();
+        }
+    }
+
+    function showh4VideoPlayer() {
+        $('.h41-video-holder').css("display", "block");
+        anime({
+            targets: '.h41-video-holder',
+            opacity: 1,
+            duration: 500,
+            easing: 'linear',
+            complete: function(anim) {
+
+            }
+        });
+    }
+
+    function hideh4VideoPlayer() {
+        anime({
+            targets: '.h41-video-holder',
+            opacity: 0,
+            duration: 500,
+            easing: 'linear',
+            complete: function(anim) {
+                $('.h41-video-holder').css("display", "none");
+            }
+        });
+    }
+
+
+    //
+
+    function showVideo() {
+        $('.main-video').css("display", "block");
+        anime({
+            targets: '.main-video',
+            opacity: 1,
+            duration: 500,
+            easing: 'linear',
+            complete: function(anim) {
+
+            }
+        });
+    }
+
+    function hideVideo() {
+        anime({
+            targets: '.main-video',
+            opacity: 0,
+            duration: 500,
+            easing: 'linear',
+            complete: function(anim) {
+                $('.main-video').css("display", "none");
+            }
+        });
+    }
+
+    function showNewsText() {
+        console.log("SHOW");
+        $('.news-text-holder').css("display", "block");
+        anime({
+            targets: '.news-text-holder',
+            opacity: 1,
+            duration: 500,
+            easing: 'linear',
+            complete: function(anim) {
+
+            }
+        });
+    }
+
+    function hideNewsText() {
+        console.log("HIDE News Text ");
+        anime({
+            targets: '.news-text-holder',
+            opacity: 0,
+            duration: 500,
+            easing: 'linear',
+            complete: function(anim) {
+                $('.news-text-holder').css("display", "none");
+            }
+        });
+    }
+
+    var videoElmh61 = document.getElementById('h61Video');
+    var videoSourceElmh61 = document.getElementById('h61VideoSource');
+    var videoElmh62 = document.getElementById('h62Video');
+    var videoSourceElmh62 = document.getElementById('h62VideoSource');
+    var videoElmh63 = document.getElementById('h63Video');
+    var videoSourceElmh63 = document.getElementById('h63VideoSource');
+    var videoElmh64 = document.getElementById('h64Video');
+    var videoSourceElmh64 = document.getElementById('h64VideoSource');
+    var videoElmh65 = document.getElementById('h65Video');
+    var videoSourceElmh65 = document.getElementById('h65VideoSource');
+    var videoElmh66 = document.getElementById('h66Video');
+    var videoSourceElmh66 = document.getElementById('h66VideoSource');
+
+    //!!ACT - 6 Videos
+    var h6VideoLoaded = false;
+
+    function loadh6VideoPlayers() {
+        // if (!videoElmh61.paused) {
+        //     videoElmh61.pause();
+        // }
+
+        videoSourceElmh61.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618407005/Act%206/TIHYMT_Grid_Uncle_1_rz5f4y.webm";
+        videoSourceElmh61.type = 'video/webm';
+        videoSourceElmh62.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618406591/Act%206/TIHYMT_Grid_Sickofit_1_womlzo.webm";
+        videoSourceElmh62.type = 'video/webm';
+        videoSourceElmh63.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618406398/Act%206/TIHYMT_Grid_Pandeyji_1_wa5gjl.webm";
+        videoSourceElmh63.type = 'video/webm';
+        videoSourceElmh64.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618406173/Act%206/TIHYMT_Grid_Millenial_1_nuvu7q.webm";
+        videoSourceElmh64.type = 'video/webm';
+        videoSourceElmh65.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618406002/Act%206/TIHYMT_Grid_Fixer_1_lo9kbw.webm";
+        videoSourceElmh65.type = 'video/webm';
+        videoSourceElmh66.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618405787/Act%206/TIHYMT_Grid_Bhakt_1_ntanzu.webm";
+        videoSourceElmh66.type = 'video/webm';
+
+        h6VideoLoaded = true;
+        videoElmh61.load();
+        videoElmh62.load();
+        videoElmh63.load();
+        videoElmh64.load();
+        videoElmh65.load();
+        videoElmh66.load();
+
+        playh6VideoPlayers();
+    }
+
+    function playh6VideoPlayers() {
+
+        videoElmh61.play();
+        videoElmh62.play();
+        videoElmh63.play();
+        videoElmh64.play();
+        videoElmh65.play();
+        videoElmh66.play();
+    }
+
+    function unloadh6VideoPlayer() {
+        h6VideoLoaded = false;
+    }
+
+    function pauseh6VideoPlayers() {
+        var videoElmh61 = document.getElementById('h61Video');
+        var videoElmh62 = document.getElementById('h62Video');
+        var videoElmh63 = document.getElementById('h63Video');
+        var videoElmh64 = document.getElementById('h64Video');
+        var videoElmh65 = document.getElementById('h65Video');
+        var videoElmh66 = document.getElementById('h66Video');
+
+        if (!videoElmh61.paused) {
+            videoElmh61.pause();
+        }
+        if (!videoElmh62.paused) {
+            videoElmh62.pause();
+        }
+        if (!videoElmh63.paused) {
+            videoElmh63.pause();
+        }
+        if (!videoElmh64.paused) {
+            videoElmh64.pause();
+        }
+        if (!videoElmh65.paused) {
+            videoElmh65.pause();
+        }
+        if (!videoElmh66.paused) {
+            videoElmh66.pause();
+        }
+
+    }
+
+    //!!ACT - 6 Follow Video
+
+    var videoElmh6Follow = document.getElementById('h6VideoFollowID');
+    videoElmh6Follow.addEventListener("ended", function() {
+        h71ScrollTo();
+    });
+
+    var h6FollowVideoLoaded = false;
+
+    function loadh6FollowVideoPlayer() {
+        var videoElmh6Follow = document.getElementById('h6VideoFollowID');
+        var videoSourceElmh6Follow = document.getElementById('h6VideoFollowSource');
+
+        // if (!videoElmh6Follow.paused) {
+        //     videoElmh6Follow.pause();
+        // }
+
+        videoSourceElmh6Follow.src = "https://res.cloudinary.com/dfclyyinf/video/upload/v1618407051/Act%206/urvi_t3ms5g.webm";
+        videoSourceElmh6Follow.type = 'video/webm';
+
+        videoElmh6Follow.load();
+        h6FollowVideoLoaded = true;
+        playh6FollowVideoPlayer();
+    }
+
+    function unloadh6FollowVideoPlayer() {
+        h6FollowVideoLoaded = false;
+    }
+
+    function playh6FollowVideoPlayer() {
+        videoElmh6Follow.play();
+
+    }
+
+    function pauseh6FollowVideoPlayer() {
+        if (!videoElmh6Follow.paused) {
+            videoElmh6Follow.pause();
+        }
+    }
+
+
+
+    //!!Rest of the code
 
 
 
     $("#h11ButtonID").click(function() { //});
         console.log("PLAY");
-        // h31ScrollTo();
-        // h41ScrollTo();
-        // h51ScrollTo();
-        //h61ScrollTo();
-        // h71ScrollTo();
+        currentState = 11;
+        loadAudio(false);
 
-        h12Audio.play();
-        h12Audio.pause();
-
-        h21Audio.play();
-        h21Audio.pause();
-
-        h31Audio.play();
-        h31Audio.pause();
-
-        h41Audio.play();
-        h41Audio.pause();
-
-        h21Video.play();
-        h21Video.pause();
-
-        h312Video.play();
-        h312Video.pause();
-
-        h314Video.play();
-        h314Video.pause();
-
-        h41Video.play();
-        h41Video.pause();
-
-        h42Video.play();
-        h42Video.pause();
-
-        h43Video.play();
-        h43Video.pause();
-
-        h44Video.play();
-        h44Video.pause();
-
-        h45Video.play();
-        h45Video.pause();
-
-        h512Audio.play();
-        h512Audio.pause();
-
-        h511Video.play();
-        h511Video.pause();
-
-        h513Video.play();
-        h513Video.pause();
-
-        h515Video.play();
-        h515Video.pause();
-
-        //!!ACT 6 
-        h612Audio.play();
-        h612Audio.pause();
-
-        h6121Video.play();
-        h6121Video.pause();
-        h6122Video.play();
-        h6122Video.pause();
-        h6123Video.play();
-        h6123Video.pause();
-        h6124Video.play();
-        h6124Video.pause();
-        h6125Video.play();
-        h6125Video.pause();
-        h6126Video.play();
-        h6126Video.pause();
-
-        h613Video.play();
-        h613Video.pause();
-
-        //!!ACT 6 
-        h812Video.play();
-        h812Video.pause();
-
-        h71Audio.play();
-        h71Audio.pause();
-
-        h11Audio.play();
-        h11Audio.onended = function() {
-            console.log("Shift to h12");
-            currentState = 12;
-            h12ScrollTo();
-        };
+        anime({
+            targets: '#h11ButtonID',
+            opacity: 0,
+            duration: 500,
+            easing: 'linear'
+        });
     });
+
+    function h11ScrollTo() {
+
+        anime({
+            targets: '#h11ButtonID',
+            opacity: 0,
+            duration: 500,
+            easing: 'linear'
+        });
+
+
+
+        currentState = 11;
+        currentScroll = $(".h11").position().top;
+
+        anime({
+            targets: '.container',
+            top: -currentScroll,
+            duration: 2000,
+            easing: 'linear',
+            complete: function(anim) {
+                currentState = 11;
+                loadAudio(false);
+            }
+        });
+
+
+    }
 
     function h12ScrollTo() {
         currentState = 12;
@@ -223,72 +673,15 @@ $(document).ready(function() {
             targets: '.container',
             top: -currentScroll,
             duration: 2000,
-            easing: 'easeInOutExpo',
+            easing: 'linear',
             complete: function(anim) {
-                h12Audio.play();
-                h12LoopingScroll();
+                currentState = 12;
+                loadAudio(true);
+
+                // h12Audio.play();
+                // h12LoopingScroll();
             }
         });
-    }
-    var h12ScrollSpeed = 1;
-    $(".h12controllerbutton.double").click(function() {
-        console.log("Double");
-        if ((h12ScrollSpeed * 2) < 5) {
-            h12ScrollSpeed *= 2;
-            $(".h12controller-text").text(h12ScrollSpeed.toString());
-        }
-    });
-
-    $(".h12controllerbutton.half").click(function() {
-        console.log("Half");
-        if ((h12ScrollSpeed / 2) > 0.24) {
-            h12ScrollSpeed /= 2;
-            $(".h12controller-text").text(h12ScrollSpeed.toString());
-        }
-    });
-
-
-    function h12LoopingScroll() {
-
-        var h12Start = $(".h12").position().top;
-        var h12End = $(".h12").height() + h12Start - $(window).height();
-        if ((currentScroll + (200 * h12ScrollSpeed)) < h12End) {
-            currentScroll += (200 * h12ScrollSpeed);
-            anime({
-                targets: '.container',
-                top: -currentScroll,
-                duration: 1000,
-                easing: 'linear',
-                complete: function(anim) {
-                    h12LoopingScroll();
-                }
-            });
-        } else {
-            anime({
-                targets: '.container',
-                top: -h12End,
-                duration: 500,
-                easing: 'linear',
-                complete: function(anim) {
-                    anime({
-                        targets: '.first-text.first-center',
-                        color: '#e5e7ca',
-                        duration: 200,
-                        easing: 'linear'
-                    });
-                    anime({
-                        targets: '.h12',
-                        backgroundImage: 'linear-gradient(150deg, #481c21, #481c21)',
-                        duration: 200,
-                        easing: 'linear',
-                        complete: function(anim) {
-                            console.log("h12 Scrolled. Scroll to h21");
-                            h21ScrollTo();
-                        }
-                    });
-                }
-            });
-        }
     }
 
     function h21ScrollTo() {
@@ -301,33 +694,29 @@ $(document).ready(function() {
             delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-                h12Audio.pause();
-                h21Audio.play();
-                h21Audio.onended = function() {
-                    console.log("Hide h211 and show h212");
-                    h212DIsplay();
-                };
+                currentState = 21;
+                loadAudio(false);
             }
         });
     }
 
-    function h212DIsplay() {
-        anime({
-            targets: '.h212',
-            opacity: 1,
-            duration: 500,
-            easing: 'easeInOutExpo',
-        });
-        h21Video.play();
+    function h212DisplayHide() {
+        currentState = 212;
+        showVideo();
+        loadVideo();
     }
 
     function h213Display() {
+
+        currentState = 213;
         anime({
             targets: '.h213',
             opacity: 1,
             duration: 1000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
+                hideVideo(); //!!HIDE VIDEO HERE
+
                 anime({
                     targets: '.h213',
                     backgroundColor: "#481c21",
@@ -367,12 +756,8 @@ $(document).ready(function() {
             delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-
-                h22Audio.play();
-                h22Audio.onended = function() {
-                    console.log("Scroll to h31 - YAAY");
-                    h31ScrollTo();
-                };
+                currentState = 22;
+                loadAudio(false);
             }
         });
     }
@@ -388,62 +773,67 @@ $(document).ready(function() {
             delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-
-                h31Audio.play();
-                h31Audio.onended = function() {
-                    console.log("Scroll to h312 - YAAY");
-
-                    h312Display();
-                };
+                loadAudio(false);
             }
         });
     }
 
-    function h312Display() {
-        anime({
-            targets: '.h312',
-            opacity: 1,
-            duration: 500,
-            easing: 'easeInOutExpo',
-        });
+    function h312DisplayHide() {
 
-        h312Video.play();
+        pauseAudio();
+
+        currentState = 312;
+        showVideo();
+        loadVideo();
+
+        // h312Video.play(); //!!CHANGE THIS FUNCTIONALITY
     }
 
     function h313Display() {
+        hideVideo();
+        currentState = 312;
+
         anime({
             targets: '.h313',
             opacity: 1,
             duration: 500,
+            delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Display h314 with delay");
-                h314Display();
+                h314DisplayHide();
             }
         });
     }
-    var h314NewsText;
+    var h314NewsText; //!!---------------Deal with this later
+    var h314NewsTextRunning = false;
 
-    function h314Display() {
-        anime({
-            targets: '.h314',
-            opacity: 1,
-            duration: 500,
-            delay: 2000,
-            easing: 'easeInOutExpo',
-        });
+    function h314DisplayHide() {
+        showVideo();
+        showNewsText();
+        currentState = 314;
+        loadVideo();
+
+        h314NewsTextRunning = true;
+
         h314NewsText = anime({
             targets: '.news-text-holder',
             left: '-1500%',
             duration: 200000,
-            delay: 2000,
             easing: 'linear',
         });
-        h314Video.play();
+
     }
 
     function h315Display() {
-        h314NewsText.pause();
+        hideVideo();
+        hideNewsText();
+
+        if (h314NewsTextRunning) {
+            h314NewsTextRunning = false;
+            h314NewsText.pause();
+        }
+
         anime({
             targets: '.h315',
             opacity: 1,
@@ -457,6 +847,8 @@ $(document).ready(function() {
     }
 
 
+    var h41Interval;
+    var h41TimerRunning = false;
 
     function h41ScrollTo() {
         currentState = 41;
@@ -468,96 +860,52 @@ $(document).ready(function() {
             delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-                h41Audio.play();
-                var h41Interval = setInterval(function() {
-                    var h41CurrentTime = h41Audio.currentTime;
+                currentState = 41;
+                loadAudio(false);
+                h41TimerRunning = true;
+                h41Interval = setInterval(function() {
+                    var h41CurrentTime = mainAudio.currentTime;
                     console.log(h41CurrentTime);
 
-                    if (Math.floor(h41CurrentTime) == 1) //58
-                    {
-                        h41video12Loop_Start();
+                    if (Math.floor(h41CurrentTime) == 55) {
+                        $('.h41-text1-holder').css('opacity', "1");
+                    } else if (Math.floor(h41CurrentTime) == 86) {
+                        $('.h41-text1-holder').css('opacity', "0");
+                        $('.h41-text2-holder').css('opacity', "1");
+                    } else if (Math.floor(h41CurrentTime) == 99) {
+                        $('.h41-text2-holder').css('opacity', "0");
+                        $('.h41-text3-holder').css('opacity', "1");
+                    } else if (Math.floor(h41CurrentTime) == 104) {
+                        $('.h41-text3-holder').css('opacity', "0");
+                        showh4VideoPlayer();
+                        h4VideoPlayerStatus = 0;
+                        inith4Player();
+                    } else if (Math.floor(h41CurrentTime) == 155) {
+                        hideh4VideoPlayer();
+                        pauseh4VideoPlayer();
+                        $('.h41-text4-holder').css('opacity', "1");
+                    } else if (Math.floor(h41CurrentTime) == 159) { //
+                        $('.h41-text4-holder').css('opacity', "0");
+                        showh4VideoPlayer();
+                        h4VideoPlayerStatus = 1;
+                        inith4Player();
+                    } else if (Math.floor(h41CurrentTime) == 300) {
+                        hideh4VideoPlayer();
+                        pauseh4VideoPlayer();
+                        $('.h41-text5-holder').css('opacity', "1");
+                    } else if (Math.floor(h41CurrentTime) == 305) { //
+                        $('.h41-text5-holder').css('opacity', "0");
+                        showh4VideoPlayer();
+                        h4VideoPlayerStatus = 2;
+                        inith4Player();
                     }
 
-                    // if (Math.floor(h41CurrentTime) == 58) //58
-                    // {
-                    //     $('.h41-text1-holder').css('opacity', "1");
-                    // } else if (Math.floor(h41CurrentTime) == 89) {
-                    //     $('.h41-text1-holder').css('opacity', "0");
-                    //     $('.h41-text2-holder').css('opacity', "1");
-                    // } else if (Math.floor(h41CurrentTime) == 102) {
-                    //     $('.h41-text2-holder').css('opacity', "0");
-                    //     $('.h41-text3-holder').css('opacity', "1");
-
-                    // } else if (Math.floor(h41CurrentTime) == 110) { //!!Video 1 and 2 are in LOOP
-                    //     h41video12LoopStart();
-                    // } else if (Math.floor(h41CurrentTime) == 18) {
-                    //     $('.h41-video4-holder').css('opacity', "1");
-                    //     h312Video.on("ended", function() {
-                    //         console.log("h41 Ended");
-                    //         $('.h41-video4-holder').css('opacity', "0");
-                    //         $('.h41-text4-holder').css('opacity', "1");
-                    //     });
-                    //     h44Video.play();
-                    // }
-
                 }, 1000);
-                h41Audio.onended = function() {
-                    h41video12Loop_End();
-                    clearInterval(h41Interval);
-                    console.log("Scroll to h51");
-                    h51ScrollTo();
-                };
+
             }
         });
     }
 
-    //!!h41 Text x Video Timer Starts
-    var h41video12_Counter = 0;
-
-    function h41video12Loop_Start() {
-        h41video12Loop_Video1();
-    }
-
-    function h41video12Loop_Video1() {
-        console.log("Play video 1");
-        $('.h41-video1-holder').css('opacity', "1");
-        $('.h41-video2-holder').css('opacity', "0");
-        h41video12_Counter = 1;
-        h41Video.load();
-        h41Video.play();
-        h41Video.on("ended", h41video12Loop_Video1_Ended);
-    }
-
-    function h41video12Loop_Video1_Ended() {
-        console.log("h41 - Switch to h42 Video");
-        // h41Video.removeEventListener('ended', h41video12Loop_Video1_Ended);
-        h41video12Loop_Video2();
-    }
-
-    function h41video12Loop_Video2() {
-        console.log("Play video 1");
-        $('.h41-video1-holder').css('opacity', "0");
-        $('.h41-video2-holder').css('opacity', "1");
-        h41video12_Counter = 2;
-        h42Video.load();
-        h42Video.play();
-        h42Video.on("ended", h41video12Loop_Video2_Ended);
-    }
-
-    function h41video12Loop_Video2_Ended() {
-        console.log("h41 - Switch to h41 Video");
-        // h42Video.removeEventListener('ended', h41video12Loop_Video1_Ended);
-        h41video12Loop_Video1();
-    }
-
-    function h41video12Loop_End() {
-        $('.h41-video1-holder').css('opacity', "0");
-        $('.h41-video2-holder').css('opacity', "0");
-        h42Video.pause();
-        h41Video.pause();
-    }
-
-    //!!h41 Text x Video Timer Ends
 
 
 
@@ -572,12 +920,17 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("h511 Video Play");
-                h511Video.play();
+                currentState = 511;
+                showVideo();
+                loadVideo();
+                // h511Video.play();
             }
         });
     }
 
     function h512Display() {
+        currentState = 512;
+        hideVideo();
         anime({
             targets: '.h512',
             opacity: 1,
@@ -585,16 +938,14 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Play 512 Audio and start Typing Animation");
-                h512Audio.play();
-                h512Audio.onended = function() {
-                    console.log("Display h513");
-                    h513DIsplay();
-                };
+                currentState = 512;
+                loadAudio(false);
             }
         });
     }
 
-    function h513DIsplay() {
+    function h513Display() {
+        currentState = 513;
         anime({
             targets: '.h513',
             opacity: 1,
@@ -602,12 +953,17 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Play Video 513");
-                h513Video.play();
+                currentState = 513;
+                showVideo();
+                loadVideo();
+                // h513Video.play();
             }
         });
     }
 
-    function h514DIsplay() {
+    function h514Display() {
+        currentState = 514;
+        hideVideo();
         anime({
             targets: '.h514',
             opacity: 1,
@@ -615,12 +971,13 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Display h515 with delay in next function");
-                h515DIsplay();
+                h515Display();
             }
         });
     }
 
-    function h515DIsplay() {
+    function h515Display() {
+        currentState = 515;
         anime({
             targets: '.h515',
             opacity: 1,
@@ -628,7 +985,10 @@ $(document).ready(function() {
             delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-                h515Video.play();
+                currentState = 515;
+                showVideo();
+                loadVideo();
+                // h515Video.play();
             }
         });
     }
@@ -636,6 +996,7 @@ $(document).ready(function() {
 
     //!!ACT - 6
     function h61ScrollTo() {
+        hideVideo();
         currentState = 61;
         currentScroll = $(".h61").position().top;
         console.log(currentScroll);
@@ -664,11 +1025,9 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Play 6 grid videos here with time stamps");
-                h612Audio.play();
-                h612Audio.onended = function() {
-                    console.log("SCroll to h613 ");
-                    h613ScrollTo();
-                };
+                currentState = 612;
+                loadAudio(false);
+                loadh6VideoPlayers();
             }
         });
     }
@@ -684,12 +1043,21 @@ $(document).ready(function() {
             easing: 'easeInOutExpo',
             complete: function(anim) {
                 console.log("Play 613 MOUSE FOLLOWING - Video");
-                h613Video.play();
+                loadh6FollowVideoPlayer();
+
+
+                // currentState = 613;
+                // showVideo();
+                // loadVideo();
             }
         });
     }
 
     function h71ScrollTo() {
+        // hideVideo();
+        unloadh6FollowVideoPlayer();
+        pauseh6FollowVideoPlayer();
+
         currentState = 71;
         currentScroll = $(".h71").position().top;
 
@@ -699,17 +1067,18 @@ $(document).ready(function() {
             duration: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-                console.log("Text Scrolling with Audio and other timestamp effects");
-                h71Audio.play();
-                h71Audio.onended = function() {
-                    console.log("SCroll to h81 ");
-                    h81ScrollTo();
-                };
+                // h71LoopingScroll();
+
+                loadAudio(true);
+
+
             }
         });
     }
 
     function h81ScrollTo() {
+        pauseAudio();
+
         currentState = 81;
         currentScroll = $(".h81").position().top;
 
@@ -719,13 +1088,14 @@ $(document).ready(function() {
             duration: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
+                pauseAudio();
                 console.log("sHOW H812 Video after delayed function");
-                h812DIsplay();
+                h812Display();
             }
         });
     }
 
-    function h812DIsplay() {
+    function h812Display() {
         anime({
             targets: '.h812',
             opacity: 1,
@@ -733,12 +1103,17 @@ $(document).ready(function() {
             delay: 2000,
             easing: 'easeInOutExpo',
             complete: function(anim) {
-                h812Video.play();
+                currentState = 812;
+                console.log("Show Video");
+                showVideo();
+                loadVideo();
+                // h812Video.play();
             }
         });
     }
 
-    function h813DIsplay() {
+    function h813Display() {
+        hideVideo();
         anime({
             targets: '.h813',
             opacity: 1,
@@ -750,5 +1125,282 @@ $(document).ready(function() {
         });
     }
 
+    function stopEverything() {
+        onPause = false;
 
+        if (audioLoaded) {
+            pauseAudio();
+        }
+        if (videoLoaded) {
+            pauseVideo();
+        }
+
+        if (currentState == 612) {
+            if (h6VideoLoaded) {
+                pauseh6VideoPlayers();
+            }
+        }
+
+        if (currentState == 613) {
+            if (h6FollowVideoLoaded) {
+                pauseh6FollowVideoPlayer();
+            }
+        }
+
+        pauseVideo();
+        hideVideo();
+
+        hideNewsText();
+
+        if (h314NewsTextRunning) {
+            h314NewsTextRunning = false;
+            h314NewsText.pause();
+        }
+
+        if (h41TimerRunning) {
+            h41TimerRunning = false;
+            clearInterval(h41Interval);
+        }
+    };
+
+    //!!Navigation Dummy Code
+    $("#BtnAct1").click(function() {
+        stopEverything();
+        h11ScrollTo();
+    });
+
+    $("#BtnAct2").click(function() {
+        stopEverything();
+        h21ScrollTo();
+    });
+
+    $("#BtnAct3").click(function() {
+        stopEverything();
+        h31ScrollTo();
+    });
+
+    $("#BtnAct4").click(function() {
+        stopEverything();
+        h41ScrollTo();
+    });
+
+    $("#BtnAct5").click(function() {
+        stopEverything();
+        h51ScrollTo();
+    });
+
+    $("#BtnAct6").click(function() {
+        stopEverything();
+        h61ScrollTo()
+    });
+
+    $("#BtnAct7").click(function() {
+        stopEverything();
+        h71ScrollTo();
+    });
+
+    $("#BtnAct8").click(function() {
+        stopEverything();
+        h81ScrollTo();
+    });
+
+    //!!Keyboard Inpuit
+    var insideScrollArea = true;
+    var scrollInProgress = false;
+    var onPause = false;
+
+    function scrollDown(proPosed) {
+        if (!scrollInProgress) {
+            scrollInProgress = true;
+
+            anime({
+                targets: '.container',
+                top: proPosed,
+                duration: 500,
+                easing: 'linear',
+                complete: function(anim) {
+                    scrollInProgress = false;
+                }
+            });
+        }
+    }
+
+    function scrollUp(proPosed) {
+        if (!scrollInProgress) {
+            scrollInProgress = true;
+
+            anime({
+                targets: '.container',
+                top: proPosed,
+                duration: 500,
+                easing: 'linear',
+                complete: function(anim) {
+                    scrollInProgress = false;
+                }
+            });
+        }
+    }
+
+    $(".body").bind('keydown', function(e) { //onkeydown
+        console.log(e.keyCode, currentState); //115 119
+
+        if (e.keyCode == 38) //Left
+        {
+            if (!scrollInProgress) {
+                if (currentState == 12) {
+                    var proPosed = parseInt($('.container').css("top").slice(0, -1)) + $(window).height() / 2
+                    var topLimit = -returnTheHook().position().top;
+
+                    if (proPosed < topLimit) {
+                        scrollUp(proPosed);
+                    } else {
+                        scrollUp(topLimit);
+                    }
+                }
+
+                if (currentState == 71) {
+                    var proPosed = parseInt($('.container').css("top").slice(0, -1)) + $(window).height() / 2
+                    var topLimit = -returnTheHook().position().top;
+
+                    if (proPosed < topLimit) {
+                        scrollUp(proPosed);
+                    } else {
+                        scrollUp(topLimit);
+                    }
+                }
+            }
+
+        } else if (e.keyCode == 40) //Right
+        {
+
+            if (!scrollInProgress) {
+                if (currentState == 12) {
+                    var proPosed = parseInt($('.container').css("top").slice(0, -1)) - $(window).height() / 2
+                    var bottomLimit = -$(".h21").position().top + (2 * $(window).height());
+                    console.log(proPosed, bottomLimit, (proPosed > bottomLimit));
+                    if (proPosed > bottomLimit) {
+                        scrollDown(proPosed);
+                    } else {
+                        scrollInProgress = true;
+                        console.log("BOOTOM");
+                        // scrollDown(bottomLimit);
+                        //!!Scroll 12 Ends here!!
+                        anime({
+                            targets: '.container',
+                            top: bottomLimit,
+                            duration: 500,
+                            easing: 'linear',
+                            complete: function(anim) {
+                                anime({
+                                    targets: '.first-text.first-center',
+                                    color: '#e5e7ca',
+                                    duration: 300,
+                                    delay: 2000,
+                                    easing: 'linear'
+                                });
+                                anime({
+                                    targets: '.h12',
+                                    backgroundImage: 'linear-gradient(150deg, #481c21, #481c21)',
+                                    duration: 300,
+                                    easing: 'linear',
+                                    delay: 2000,
+                                    complete: function(anim) {
+                                        console.log("h12 Scrolled. Scroll to h21");
+                                        unloadAudio();
+                                        h21ScrollTo();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+
+                if (currentState == 71) {
+                    var proPosed = parseInt($('.container').css("top").slice(0, -1)) - $(window).height() / 2
+                    var bottomLimit = -$(".h81").position().top + $(window).height();
+                    console.log(proPosed, bottomLimit, (proPosed > bottomLimit));
+                    if (proPosed > bottomLimit) {
+                        scrollDown(proPosed);
+                    } else {
+                        scrollInProgress = true;
+                        console.log("BOOTOM");
+                        // scrollDown(bottomLimit);
+                        //!!Scroll 12 Ends here!!
+                        anime({
+                            targets: '.container',
+                            top: bottomLimit,
+                            duration: 500,
+                            easing: 'linear',
+                            complete: function(anim) {
+                                console.log("h71 Scrolled. Scroll to h81");
+                                unloadAudio();
+                                h81ScrollTo();
+                            }
+                        });
+                    }
+                }
+            }
+
+
+        } else if (e.keyCode == 32) //Space
+        {
+
+            if (
+                (currentState != 12) &&
+                (currentState != 71)
+            ) {
+                if (
+                    (audioLoaded == true) ||
+                    (videoLoaded == true) ||
+                    (h6VideoLoaded == true) ||
+                    (h6FollowVideoLoaded == true)
+                ) {
+
+                    if (onPause) {
+                        onPause = false;
+                        if (audioLoaded) {
+                            playAudio();
+                        }
+                        if (videoLoaded) {
+                            playVideo();
+                        }
+
+                        if (currentState == 612) {
+                            if (h6VideoLoaded) {
+                                playh6VideoPlayers();
+                            }
+                        }
+
+                        if (currentState == 613) {
+                            if (h6FollowVideoLoaded) {
+                                playh6FollowVideoPlayer();
+                            }
+                        }
+                    } else {
+                        console.log("Paused ", currentState);
+                        onPause = true;
+                        if (audioLoaded) {
+                            pauseAudio();
+                        }
+                        if (videoLoaded) {
+                            pauseVideo();
+                        }
+
+                        if (currentState == 612) {
+                            if (h6VideoLoaded) {
+                                pauseh6VideoPlayers();
+                            }
+                        }
+
+                        if (currentState == 613) {
+                            if (h6FollowVideoLoaded) {
+                                pauseh6FollowVideoPlayer();
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    });
 });
